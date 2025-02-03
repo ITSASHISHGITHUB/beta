@@ -120,22 +120,23 @@ function CustomUserProfileButton() {
   }, []);
 
   return (
-    <button className="bg-gray-100 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-200 transition-colors flex items-center gap-2 fixed top-2 right-20" id="user-profile-button">
+    <button className="bg-gray-100 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-200 transition-colors flex items-center gap-2 fixed top-2 right-20 md:right-10 sm:right-5">
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
       </svg>
       <div className="flex items-center gap-3">
-        <span className="px-3 py-1 bg-white rounded border border-gray-200">
+        <span className="px-3 py-1 bg-white rounded border border-gray-200 text-sm sm:text-base md:text-lg">
           Ashish Yadav
         </span>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span>{location}</span>
+          <span className="text-xs sm:text-sm md:text-base">{location}</span>
         </div>
       </div>
     </button>
   );
+  
 }
 
 export default function DashboardLayoutWithCustomUserProfile(props) {
