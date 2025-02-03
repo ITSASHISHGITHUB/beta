@@ -157,9 +157,9 @@ export default function DashboardLayoutWithCustomUserProfile(props) {
       window={demoWindow}
     >
       <DashboardLayout
-        slots={{
-          toolbarAccount: CustomUserProfileButton,
-        }}
+        // slots={{
+        //   toolbarAccount: '',
+        // }}
       >
         <PageContainer>
           <Landing />
