@@ -9,7 +9,8 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
-import Landing from "../pages/landing";  // Ensure this path is correct for your project
+import Landing from "../pages/landing";  
+import Budget from "../pages/buget";  
 
 const NAVIGATION = [
   {
@@ -22,9 +23,10 @@ const NAVIGATION = [
     icon: <DashboardIcon />,
   },
   {
-    segment: 'orders',
+    segment: 'budget',
     title: 'Budget Trip',
     icon: <ShoppingCartIcon />,
+    onClick: (navigate) => navigate('/budget'), 
   },
   {
     kind: 'divider',
@@ -72,8 +74,8 @@ const NAVIGATION = [
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
   palette: {
-    primary: { main: '#FF5722' },  // Example color
-    secondary: { main: '#2196F3' },  // Example color
+    primary: { main: '#FF5722' },  
+    secondary: { main: '#2196F3' },  
   },
   breakpoints: {
     values: {
@@ -156,13 +158,9 @@ export default function DashboardLayoutWithCustomUserProfile(props) {
       theme={demoTheme}
       window={demoWindow}
     >
-      <DashboardLayout
-        // slots={{
-        //   toolbarAccount: '',
-        // }}
-      >
+      <DashboardLayout>
         <PageContainer>
-          <Landing />
+          {router.pathname === '/budget' ? <Budget /> : <Landing />}
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
