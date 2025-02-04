@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import SendIcon from '@mui/icons-material/Send';
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
     { text: "Hello! I'm your trip planning assistant. I can help you plan routes from Pune to destinations like Lonavala and Lavasa. Where would you like to go?", sender: "assistant" }
@@ -63,26 +63,30 @@ const ChatInterface = () => {
 
       <div className="border-t border-gray-200 pt-4" id="el-abkn5n4j">
         <div className="flex gap-4" id="el-a1yms3fw">
-          <div className="flex-1 relative" id="el-8ends1g6">
-            <textarea
-              id="chat-input"
-              className="w-full border border-gray-300 rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-blue-500 resize-none"
-              rows="1"
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Type your message here..."
-            />
-            <button
-              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-              onClick={handleSendMessage}
-              id="el-84ulbk4t"
-            >
-                send
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="el-y1gn2war">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" id="el-7vc3cuyw"></path>
-              </svg>
-            </button>
-          </div>
+        <div className="flex-1 relative" id="el-8ends1g6">
+  <textarea
+    id="chat-input"
+    className="w-full border border-gray-300 rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-blue-500 resize-none"
+    rows="1"
+    value={input}
+    onChange={handleInputChange}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); 
+        handleSendMessage();
+      }
+    }}
+    placeholder="Type your message here..."
+  />
+  <button
+    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+    onClick={handleSendMessage}
+    id="el-84ulbk4t"
+  >
+    <SendIcon />
+  </button>
+</div>
+
         </div>
       </div>
     </section>
