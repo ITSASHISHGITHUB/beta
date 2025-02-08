@@ -22,7 +22,7 @@ export async function getServerSideProps(context) {
   if (!session) {
     return {
       redirect: {
-        destination: "/auth/signin",
+        destination: "/",
         permanent: false,
       },
     };
