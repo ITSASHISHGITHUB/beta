@@ -8,17 +8,80 @@ import HelpIcon from "@mui/icons-material/Help";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Avatar, Badge, styled, StyledBadge } from "@mui/material";
+import { Avatar, Badge, styled } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import { fetchGeminiResponse } from "../utils/gemini";
+
 const Home = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mapUrl, setMapUrl] = useState("");
   const { data: session, status } = useSession();
+
+  const isRouteQuery = (message) => {
+    const routeKeywords = ['route', 'direction', 'from', 'to', 'how to reach', 'way to'];
+    return routeKeywords.some(keyword => message.toLowerCase().includes(keyword));
+  };
+
+  const extractLocations = (message) => {
+    const fromToRegex = /(?:from\s+)([a-zA-Z\s]+)(?:\s+to\s+)([a-zA-Z\s]+)/i;
+    const match = message.match(fromToRegex);
+    if (match) {
+      return {
+        origin: match[1].trim(),
+        destination: match[2].trim()
+      };
+    }
+    return null;
+  };
+
+  const generateMapsUrl = (origin, destination) => {
+    const baseUrl = "https://www.google.com/maps/embed/v1/directions";
+    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    return `${baseUrl}?key=${key}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&mode=driving`;
+  };
+
+  const handleSendMessage = async () => {
+    if (status !== "authenticated" || !input.trim()) return;
+
+    try {
+      const userMessage = { text: input, sender: "user" };
+      setMessages(prev => [...prev, userMessage]);
+      setInput("");
+      setIsLoading(true);
+
+      if (isRouteQuery(input)) {
+        const locations = extractLocations(input);
+        if (locations) {
+          const mapsUrl = generateMapsUrl(locations.origin, locations.destination);
+          setMapUrl(mapsUrl);
+        }
+      }
+
+      const aiResponse = await fetchGeminiResponse(input);
+      
+      setMessages(prev => [...prev, { 
+        text: aiResponse || "I apologize, but I couldn't generate a response. Please try again.", 
+        sender: "bot",
+        isRoute: isRouteQuery(input)
+      }]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setMessages(prev => [...prev, { 
+        text: "I apologize, but an error occurred. Please try again.", 
+        sender: "bot" 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
   };
+
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
   };
@@ -38,23 +101,6 @@ const Home = () => {
   const handleSignOut = () => {
     signOut();
     setMessages([]);
-  };
-
-  const handleSendMessage = () => {
-    if (status !== "authenticated") return;
-
-    if (input.trim()) {
-      const newMessages = [
-        ...messages,
-        { text: input, sender: "user" },
-        {
-          text: "Thank you for your message! Our team will respond shortly.",
-          sender: "bot",
-        },
-      ];
-      setMessages(newMessages);
-      setInput("");
-    }
   };
 
   const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -87,7 +133,8 @@ const Home = () => {
   }));
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleSendMessage();
     }
   };
@@ -246,6 +293,26 @@ const Home = () => {
                     </div>
                   </div>
                 ))}
+                {mapUrl && (
+                  <div className="w-full mt-2 rounded-lg overflow-hidden shadow-lg">
+                    <iframe
+                      src={mapUrl}
+                      width="100%"
+                      height="400"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
+                )}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 p-3 rounded-lg">
+                      <CircularProgress size={20} />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -260,6 +327,9 @@ const Home = () => {
                     value={input}
                     onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
+                    disabled={isLoading}
+                    multiline
+                    maxRows={4}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: 20,
@@ -270,6 +340,7 @@ const Home = () => {
                   <Button
                     variant="contained"
                     onClick={handleSendMessage}
+                    disabled={isLoading}
                     sx={{
                       borderRadius: 20,
                       px: 4,
