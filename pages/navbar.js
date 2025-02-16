@@ -1,40 +1,49 @@
-import React from "react";
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button, IconButton, styled } from '@mui/material';
+import { Paperclip, ChevronDown } from '@mui/icons-material'; // Icons for the buttons
 
-const Navbar = ({ status, session }) => {
+// Styled components for custom styling
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  backgroundColor: '#fff', // White background
+  color: '#000', // Black text
+  borderBottom: '1px solid #e0e0e0', // Light gray border
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  borderRadius: '20px', // Rounded corners
+  textTransform: 'none', // Disable uppercase transformation
+  fontWeight: 'bold', // Bold text
+}));
+
+function Navbar() {
   return (
-    <nav style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px", backgroundColor: "#333", color: "white" }}>
-      <h1>My App</h1>
-      {status === "authenticated" && session?.user && (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: "10px" }}>
-            Welcome, {session.user.name &&
-              session.user.name
-                .toLowerCase()
-                .split(" ")
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}
-          </span>
-          <div style={{ position: "relative", display: "inline-block" }}>
-            <img
-              src={session.user.image}
-              alt={session.user.name}
-              style={{ width: "32px", height: "32px", borderRadius: "50%" }}
-            />
-            <span style={{
-              position: "absolute",
-              bottom: "0",
-              right: "0",
-              width: "8px",
-              height: "8px",
-              backgroundColor: "#44b700",
-              borderRadius: "50%",
-              border: "2px solid white"
-            }}></span>
-          </div>
+    <StyledAppBar position="static" elevation={0}>
+      <Toolbar sx={{ justifyContent: 'space-between', padding: '8px 16px' }}>
+        {/* Left Section */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <IconButton color="inherit" size="medium">
+            <Paperclip fontSize="large" />
+          </IconButton>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Ashish Beta
+          </Typography>
+          <IconButton color="inherit" size="small">
+            <ChevronDown fontSize="small" />
+          </IconButton>
         </div>
-      )}
-    </nav>
+
+        {/* Right Section */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <StyledButton variant="outlined" color="primary">
+            Log in
+          </StyledButton>
+          <StyledButton variant="contained" color="primary">
+            Sign up
+          </StyledButton>
+        </div>
+      </Toolbar>
+    </StyledAppBar>
   );
-};
+}
 
 export default Navbar;
